@@ -2,15 +2,16 @@
   "name": "float-memo",
   "version": "1.0.0",
   "description": "Always-on-top floating memo",
+  "type": "module",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "test": "vitest run",
+    "test": "vitest run tests/unit",
     "test:watch": "vitest"
   },
   "devDependencies": {
-    "electron": "^37.1.0",
-    "vitest": "^2.1.8",
-    "playwright": "^1.53.2"
+    "electron": "^37.10.3",
+    "playwright": "^1.53.2",
+    "vitest": "^2.1.8"
   }
 }
