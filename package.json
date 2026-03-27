@@ -7,11 +7,31 @@
   "scripts": {
     "start": "electron .",
     "test": "vitest run tests/unit",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "dist:win": "electron-builder --win nsis"
   },
   "devDependencies": {
     "electron": "^37.10.3",
+    "electron-builder": "^24.13.3",
     "playwright": "^1.53.2",
     "vitest": "^2.1.8"
+  },
+  "build": {
+    "appId": "local.floatmemo.app",
+    "productName": "FloatMemo",
+    "asar": true,
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis",
+      "signAndEditExecutable": false
+    }
   }
 }

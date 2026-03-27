@@ -18,51 +18,13 @@ body {
   min-height: 100vh;
 }
 
-.toolbar {
-  display: flex;
-  gap: 8px;
-  padding: 8px;
-  background: var(--panel);
-  border-bottom: 1px solid #d9c8ad;
-}
-
-.toolbar button {
-  border: 1px solid #c9b28f;
-  border-radius: 6px;
-  background: #fffaf0;
-  color: var(--ink);
-  padding: 6px 10px;
-  cursor: pointer;
-}
-
-.tabs {
-  display: flex;
-  gap: 4px;
-  padding: 6px 8px;
-  overflow-x: auto;
-  border-bottom: 1px solid #e0d3bd;
-}
-
-.tab {
-  border: 1px solid #d5c4a8;
-  border-radius: 6px;
-  background: #fffaf0;
-  padding: 4px 8px;
-  cursor: pointer;
-}
-
-.tab.active {
-  border-color: var(--accent);
-  background: #ffe9c8;
-}
-
 #editor {
-  width: calc(100% - 16px);
-  height: calc(100vh - 98px);
-  margin: 8px;
+  width: 100%;
+  height: 100vh;
+  margin: 0;
   resize: none;
-  border: 1px solid #ceb99a;
-  border-radius: 8px;
+  border: none;
+  border-radius: 0;
   padding: 10px;
   color: var(--ink);
   background: #fffdf9;
