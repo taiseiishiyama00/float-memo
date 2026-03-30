@@ -1,28 +1,66 @@
+import { readDraft, writeDraft } from './draftStore.js';
+import { getEditorContent, updateEditorContent } from './memoState.js';
+
 const editorEl = document.querySelector('#editor');
+const draftStorage = window.localStorage;
 
-let state = await window.memoApi.loadState();
-let saveTimer = null;
+editorEl.value = readDraft(draftStorage, '');
 
-function scheduleSave() {
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    window.memoApi.saveState(state);
-  }, 500);
+let state = null;
+let pendingSave = Promise.resolve();
+
+function saveCurrentContent() {
+  pendingSave = pendingSave
+    .catch(() => undefined)
+    .then(() => window.memoApi.saveState(state));
+
+  return pendingSave;
 }
 
-function init() {
-  if (state && typeof state.content === 'string') {
-    editorEl.value = state.content;
+function refreshStateFromEditor() {
+  writeDraft(draftStorage, editorEl.value);
+
+  if (state) {
+    state = updateEditorContent(state, editorEl.value);
+  }
+}
+
+function flushCurrentContent() {
+  refreshStateFromEditor();
+
+  if (state) {
+    window.memoApi.flushState(state);
   }
 }
 
 editorEl.addEventListener('input', () => {
-  state = {
-    ...state,
-    content: editorEl.value,
-    updatedAt: new Date().toISOString()
-  };
-  scheduleSave();
+  refreshStateFromEditor();
+
+  if (state) {
+    void saveCurrentContent();
+  }
 });
 
-init();
+window.addEventListener('beforeunload', () => {
+  flushCurrentContent();
+});
+
+window.addEventListener('pagehide', () => {
+  flushCurrentContent();
+});
+
+try {
+  state = await window.memoApi.loadState();
+  const persistedContent = getEditorContent(state);
+  const fallbackDraft = readDraft(draftStorage, '');
+  const initialContent = persistedContent || fallbackDraft;
+
+  editorEl.value = initialContent;
+
+  if (initialContent !== persistedContent) {
+    state = updateEditorContent(state, initialContent);
+    void saveCurrentContent();
+  }
+} catch {
+  state = null;
+}

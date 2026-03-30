@@ -30,4 +30,27 @@ describe('stateStore', () => {
     const loaded = JSON.parse(fs.readFileSync(file, 'utf8'));
     expect(loaded.appVersion).toBe(1);
   });
+
+  it('overwrites an existing state file on repeated saves', () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'fm-'));
+    const file = path.join(dir, 'state.json');
+    const first = createDefaultState();
+    const second = {
+      ...createDefaultState(),
+      content: 'persisted text',
+      tabs: [
+        {
+          ...createDefaultState().tabs[0],
+          content: 'persisted text'
+        }
+      ]
+    };
+
+    saveStateAtomic(file, first);
+    saveStateAtomic(file, second);
+
+    const loaded = JSON.parse(fs.readFileSync(file, 'utf8'));
+    expect(loaded.content).toBe('persisted text');
+    expect(loaded.tabs[0].content).toBe('persisted text');
+  });
 });

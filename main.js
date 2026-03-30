@@ -92,12 +92,22 @@ app.whenReady().then(() => {
 
   ipcMain.handle('load-state', () => inMemoryState);
 
-  ipcMain.on('save-state', (_event, nextState) => {
+  ipcMain.handle('save-state', async (_event, nextState) => {
     inMemoryState = {
       ...nextState,
       updatedAt: new Date().toISOString()
     };
     saveStateAtomic(stateFilePath, inMemoryState);
+    return inMemoryState;
+  });
+
+  ipcMain.on('save-state-sync', (event, nextState) => {
+    inMemoryState = {
+      ...nextState,
+      updatedAt: new Date().toISOString()
+    };
+    saveStateAtomic(stateFilePath, inMemoryState);
+    event.returnValue = inMemoryState;
   });
 
   ipcMain.on('window-minimize', () => {
